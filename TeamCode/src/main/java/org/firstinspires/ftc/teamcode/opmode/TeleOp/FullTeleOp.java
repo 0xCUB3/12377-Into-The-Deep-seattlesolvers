@@ -23,9 +23,13 @@ import org.firstinspires.ftc.teamcode.commandbase.Intake;
 import org.firstinspires.ftc.teamcode.commandbase.commands.*;
 import org.firstinspires.ftc.teamcode.hardware.Robot;
 import org.firstinspires.ftc.teamcode.hardware.TelemetryData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @TeleOp
 public class FullTeleOp extends CommandOpMode {
+    private static final Logger logger = LoggerFactory.getLogger(FullTeleOp.class);
+
     public GamepadEx driver;
     public GamepadEx operator;
 
@@ -41,6 +45,8 @@ public class FullTeleOp extends CommandOpMode {
 
     @Override
     public void initialize() {
+        logger.info("Initializing FullTeleOp");
+
         // Must have for all opModes
         opModeType = OpModeType.TELEOP;
         // depositInit = DepositInit.MIDDLE_HOLD;
@@ -49,32 +55,49 @@ public class FullTeleOp extends CommandOpMode {
 
         // DO NOT REMOVE! Resetting FTCLib Command Scheduler
         super.reset();
+        logger.info("Command Scheduler reset");
 
         robot.init(hardwareMap);
+        logger.info("Robot initialized");
 
         // Initialize subsystems
         register(robot.deposit, robot.intake);
+        logger.info("Deposit and Intake subsystems registered");
 
         robot.intake.setActiveIntake(IntakeMotorState.STOP);
+        logger.info("Intake motor set to STOP");
 
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
+        logger.info("Gamepads initialized");
 
         // Driver Gamepad controls
         driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-                new InstantCommand(() -> robot.intake.toggleActiveIntake(SampleColorTarget.ANY_COLOR))
+                new InstantCommand(() -> {
+                    logger.info("Driver B pressed: Toggling Intake (ANY_COLOR)");
+                    robot.intake.toggleActiveIntake(SampleColorTarget.ANY_COLOR);
+                })
         );
 
         driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                new InstantCommand(() -> robot.intake.toggleActiveIntake(SampleColorTarget.ALLIANCE_ONLY))
+                new InstantCommand(() -> {
+                    logger.info("Driver A pressed: Toggling Intake (ALLIANCE_ONLY)");
+                    robot.intake.toggleActiveIntake(SampleColorTarget.ALLIANCE_ONLY);
+                })
         );
 
         driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
-                new SetIntake(robot, IntakePivotState.INTAKE_READY, IntakeMotorState.HOLD, MAX_EXTENDO_EXTENSION/2, true)
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> logger.info("Driver X pressed: Moving Intake to INTAKE_READY")),
+                        new SetIntake(robot, IntakePivotState.INTAKE_READY, IntakeMotorState.HOLD, MAX_EXTENDO_EXTENSION/2, true)
+                )
         );
 
         driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-                new SetIntake(robot, IntakePivotState.INTAKE_READY, intakeMotorState, MAX_EXTENDO_EXTENSION, true)
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> logger.info("Driver Y pressed: Moving Intake to INTAKE (full extendo)")),
+                        new SetIntake(robot, IntakePivotState.INTAKE_READY, intakeMotorState, MAX_EXTENDO_EXTENSION, true)
+                )
         );
 
 //        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
@@ -82,39 +105,59 @@ public class FullTeleOp extends CommandOpMode {
 //        );
 
         operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
-                new SetDeposit(robot, Deposit.DepositPivotState.MIDDLE_HOLD, ENDGAME_ASCENT_HEIGHT, false).withTimeout(2500)  // Adjust timeout as needed
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> logger.info("Operator Dpad Up pressed: Moving Deposit to MIDDLE_HOLD (Endgame Ascent Height)")),
+                        new SetDeposit(robot, Deposit.DepositPivotState.MIDDLE_HOLD, ENDGAME_ASCENT_HEIGHT, false).withTimeout(2500)  // Adjust timeout as needed
+                )
         );
 
         driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                 new SequentialCommandGroup(
+                        new InstantCommand(() -> logger.info("Driver Dpad Down pressed: Moving Intake to INTAKE_READY and setting IntakeMotorState to HOLD")),
                         new InstantCommand(() -> robot.intake.setPivot(IntakePivotState.INTAKE_READY)),
                         new InstantCommand(() -> robot.intake.setActiveIntake(IntakeMotorState.HOLD))
                 )
         );
 
         driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
-                new InstantCommand(() -> robot.intake.setExtendoTarget(0))
+                new InstantCommand(() -> {
+                    logger.info("Driver Dpad Right pressed: Retracting Extendo");
+                    robot.intake.setExtendoTarget(0);
+                })
         );
 
         // TO-DO: need to make into 1 method in Drive.java
         driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
                 new ConditionalCommand(
-                        new InstantCommand(() -> robot.drive.setSubPusher(Drive.SubPusherState.OUT)),
-                        new InstantCommand(() -> robot.drive.setSubPusher(Drive.SubPusherState.IN)),
+                        new InstantCommand(() -> {
+                            logger.info("Driver Dpad Left pressed: Setting Sub Pusher to OUT");
+                            robot.drive.setSubPusher(Drive.SubPusherState.OUT);
+                        }),
+                        new InstantCommand(() -> {
+                            logger.info("Driver Dpad Left pressed: Setting Sub Pusher to IN");
+                            robot.drive.setSubPusher(Drive.SubPusherState.IN);
+                        }),
                         () -> Drive.subPusherState.equals(Drive.SubPusherState.IN))
         );
 
         driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
-                new InstantCommand(() -> robot.intake.setPivot(IntakePivotState.TRANSFER))
+                new InstantCommand(() -> {
+                    logger.info("Driver Left Bumper pressed: Moving Intake Pivot to TRANSFER");
+                    robot.intake.setPivot(IntakePivotState.TRANSFER);
+                })
         );
 
         driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
-                new InstantCommand(() -> robot.intake.setPivot(IntakePivotState.INTAKE))
+                new InstantCommand(() -> {
+                    logger.info("Driver Right Bumper pressed: Moving Intake Pivot to INTAKE");
+                    robot.intake.setPivot(IntakePivotState.INTAKE);
+                })
         );
 
         driver.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
                 new UninterruptibleCommand(
                         new SequentialCommandGroup(
+                                new InstantCommand(() -> logger.info("Driver Left Stick pressed: Starting UNINTERRUPTIBLE UndoTransfer")),
                                 new UndoTransfer(robot),
                                 new SetIntake(robot, IntakePivotState.INTAKE, IntakeMotorState.REVERSE, MAX_EXTENDO_EXTENSION, true)
                         )
@@ -123,7 +166,10 @@ public class FullTeleOp extends CommandOpMode {
 
         driver.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(
                 new UninterruptibleCommand(
-                        new RealTransfer(robot)
+                        new SequentialCommandGroup(
+                                new InstantCommand(() -> logger.info("Driver Right Stick pressed: Starting UNINTERRUPTIBLE RealTransfer")),
+                                new RealTransfer(robot)
+                        )
                 )
         );
 
@@ -131,6 +177,7 @@ public class FullTeleOp extends CommandOpMode {
         driver.getGamepadButton(GamepadKeys.Button.PS).whenPressed(
                 new UninterruptibleCommand(
                         new SequentialCommandGroup(
+                                new InstantCommand(() -> logger.warn("Driver PS pressed: Resetting CommandScheduler and setting slides target to current position")),
                                 new InstantCommand(super::reset),
                                 new InstantCommand(() -> robot.drive.setSubPusher(Drive.SubPusherState.IN)),
                                 new InstantCommand(() -> robot.deposit.setSlideTarget(robot.deposit.getLiftScaledPosition()))
@@ -140,16 +187,25 @@ public class FullTeleOp extends CommandOpMode {
 
         // Operator Gamepad controls
         operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
-                new InstantCommand(() -> frontSpecimenScoring = !frontSpecimenScoring)
+                new InstantCommand(() -> {
+                    frontSpecimenScoring = !frontSpecimenScoring;
+                    logger.info("Operator X pressed: Toggling frontSpecimenScoring to " + frontSpecimenScoring);
+                })
         );
 
         operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                 new ConditionalCommand(
                         new UninterruptibleCommand(
-                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false).withTimeout(1500)
+                                new SequentialCommandGroup(
+                                        new InstantCommand(() -> logger.info("Operator B pressed: Starting UNINTERRUPTIBLE SetDeposit to SPECIMEN_SCORING (front)")),
+                                        new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false).withTimeout(1500)
+                                )
                         ),
                         new UninterruptibleCommand(
-                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false).withTimeout(1500)
+                                new SequentialCommandGroup(
+                                        new InstantCommand(() -> logger.info("Operator B pressed: Starting UNINTERRUPTIBLE SetDeposit to SPECIMEN_SCORING (back)")),
+                                        new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false).withTimeout(1500)
+                                )
                         ),
                         () -> frontSpecimenScoring
                 )
@@ -158,10 +214,16 @@ public class FullTeleOp extends CommandOpMode {
         operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new ConditionalCommand(
                         new UninterruptibleCommand(
-                                new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, false).withTimeout(1500)
+                                new SequentialCommandGroup(
+                                        new InstantCommand(() -> logger.info("Operator A pressed: Starting UNINTERRUPTIBLE SetDeposit to SPECIMEN_INTAKE (front)")),
+                                        new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, false).withTimeout(1500)
+                                )
                         ),
                         new UninterruptibleCommand(
-                                new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, false).withTimeout(1500)
+                                new SequentialCommandGroup(
+                                        new InstantCommand(() -> logger.info("Operator A pressed: Starting UNINTERRUPTIBLE SetDeposit to SPECIMEN_INTAKE (back)")),
+                                        new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, false).withTimeout(1500)
+                                )
                         ),
                         () -> frontSpecimenScoring
                 )
@@ -169,39 +231,59 @@ public class FullTeleOp extends CommandOpMode {
 
         operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new ConditionalCommand(
-                        new attachSpecimen(robot.deposit),
-                        new InstantCommand(),
+                        new SequentialCommandGroup(
+                                new InstantCommand(() -> logger.info("Operator Y pressed: Starting UNINTERRUPTIBLE attachSpecimen")),
+                                new attachSpecimen(robot.deposit)
+                        ),
+                        new InstantCommand(() -> logger.warn("Operator Y pressed: Cannot execute attachSpecimen because not in SPECIMEN_SCORING")),
                         () -> depositPivotState.equals(DepositPivotState.SPECIMEN_SCORING)
                 )
         );
 
         operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                 new UninterruptibleCommand(
-                        new SetDeposit(robot, DepositPivotState.SCORING, HIGH_BUCKET_HEIGHT, false).withTimeout(1500)
+                        new SequentialCommandGroup(
+                                new InstantCommand(() -> logger.info("Operator Dpad Up pressed: Starting UNINTERRUPTIBLE SetDeposit to SCORING (HIGH_BUCKET_HEIGHT)")),
+                                new SetDeposit(robot, DepositPivotState.SCORING, HIGH_BUCKET_HEIGHT, false).withTimeout(1500)
+                        )
                 )
         );
 
         operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                 new UninterruptibleCommand(
-                        new SetDeposit(robot, DepositPivotState.SCORING, LOW_BUCKET_HEIGHT, false).withTimeout(1500)
+                        new SequentialCommandGroup(
+                                new InstantCommand(() -> logger.info("Operator Dpad Down pressed: Starting UNINTERRUPTIBLE SetDeposit to SCORING (LOW_BUCKET_HEIGHT)")),
+                                new SetDeposit(robot, DepositPivotState.SCORING, LOW_BUCKET_HEIGHT, false).withTimeout(1500)
+                        )
                 )
         );
 
         operator.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
                 new UninterruptibleCommand(
-                        new SetDeposit(robot, DepositPivotState.MIDDLE_HOLD, 0, true).withTimeout(1500)
+                        new SequentialCommandGroup(
+                                new InstantCommand(() -> logger.info("Operator Left Stick pressed: Starting UNINTERRUPTIBLE SetDeposit to MIDDLE_HOLD")),
+                                new SetDeposit(robot, DepositPivotState.MIDDLE_HOLD, 0, true).withTimeout(1500)
+                        )
                 )
         );
 
         operator.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
-                new InstantCommand(() -> robot.deposit.setClawOpen(false))
+                new InstantCommand(() -> {
+                    logger.info("Operator Left Bumper pressed: Closing Claw");
+                    robot.deposit.setClawOpen(false);
+                })
         );
 
         operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
-                new InstantCommand(() -> robot.deposit.setClawOpen(true))
+                new InstantCommand(() -> {
+                    logger.info("Operator Right Bumper pressed: Opening Claw");
+                    robot.deposit.setClawOpen(true);
+                })
         );
+        logger.info("All buttons bound");
 
         super.run();
+        logger.info("Super.run() from CommandOpMode called");
     }
 
     @Override
@@ -210,15 +292,19 @@ public class FullTeleOp extends CommandOpMode {
         // This is like the init but when the program is actually started
         if (timer == null) {
             robot.initHasMovement();
+            logger.info("HasMovement initialized");
 
             INTAKE_HOLD_SPEED = 0.15; // Enable hold
+            logger.info("Intake hold speed set to " + INTAKE_HOLD_SPEED);
 
             timer = new ElapsedTime();
             gameTimer = new ElapsedTime();
+            logger.info("Timers initialized");
         }
         // Endgame/hang rumble after 105 seconds to notify robot.driver to hang
         else if ((gameTimer.seconds() > 105) && (!endgame)) {
             endgame = true;
+            logger.warn("Endgame sequence triggered - rumbling controllers!");
             gamepad1.rumble(500);
             gamepad2.rumble(500);
         }
@@ -247,8 +333,8 @@ public class FullTeleOp extends CommandOpMode {
 
         // Manual control of extendo
         if (gamepad1.right_trigger > 0.01 &&
-            !depositPivotState.equals(DepositPivotState.TRANSFER) &&
-            robot.intake.getExtendoScaledPosition() <= (MAX_EXTENDO_EXTENSION - 5)) {
+                !depositPivotState.equals(DepositPivotState.TRANSFER) &&
+                robot.intake.getExtendoScaledPosition() <= (MAX_EXTENDO_EXTENSION - 5)) {
 
             robot.intake.target += 5;
         }
@@ -295,5 +381,6 @@ public class FullTeleOp extends CommandOpMode {
     @Override
     public void end() {
         autoEndPose = robot.follower.getPose();
+        logger.info("TeleOp ended");
     }
 }
