@@ -250,7 +250,7 @@ public class LifestyleBowl extends CommandOpMode {
                         new SetDeposit(robot, DepositPivotState.SCORING, HIGH_BUCKET_HEIGHT, false).withTimeout(1000)
                 ),
                 new ConditionalCommand(
-                        new SetIntake(robot, IntakePivotState.HOVER, IntakeMotorState.FORWARD, nextSlideTarget, false),
+                        new SetIntake(robot, IntakePivotState.INTAKE_READY, IntakeMotorState.FORWARD, nextSlideTarget, false), // COULD BE WRONG
                         new InstantCommand(),
                         () -> nextSlideTarget != -1
                 ),
@@ -331,7 +331,7 @@ public class LifestyleBowl extends CommandOpMode {
     @Override
     public void initialize() {
         opModeType = OpModeType.AUTO;
-        depositInit = DepositPivotState.FRONT_SPECIMEN_SCORING;
+        depositInit = DepositInit.SPECIMEN_SCORING;
         Intake.sampleColorTarget = SampleColorTarget.ANY_COLOR;
 
         timer = new ElapsedTime();
@@ -364,7 +364,7 @@ public class LifestyleBowl extends CommandOpMode {
                                         new WaitCommand(400),
                                         new ParallelCommandGroup(
                                                 new FollowPathCommand(robot.follower, paths.get(0)).setHoldEnd(true),
-                                                new SetIntake(robot, IntakePivotState.HOVER, IntakeMotorState.FORWARD, 190, false)
+                                                new SetIntake(robot, IntakePivotState.INTAKE_READY, IntakeMotorState.FORWARD, 190, false)
                                         )
                                 )
                         ),
@@ -396,7 +396,7 @@ public class LifestyleBowl extends CommandOpMode {
                                 new FollowPathCommand(robot.follower, paths.get(11)),
                                 new SequentialCommandGroup(
                                         new WaitCommand(300),
-                                        new SetDeposit(robot, DepositPivotState.AUTO_TOUCH_BAR, 0, false)
+                                        new SetDeposit(robot, DepositPivotState.MIDDLE_HOLD, 0, false)
                                 )
                         )
                 )

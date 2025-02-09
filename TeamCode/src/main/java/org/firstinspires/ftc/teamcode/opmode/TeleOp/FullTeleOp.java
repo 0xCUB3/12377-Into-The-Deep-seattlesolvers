@@ -6,13 +6,10 @@ import static org.firstinspires.ftc.teamcode.commandbase.Intake.*;
 
 import com.pedropathing.localization.Pose;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
-import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.UninterruptibleCommand;
-import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,6 +17,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.commandbase.Deposit;
 import org.firstinspires.ftc.teamcode.commandbase.Drive;
 import org.firstinspires.ftc.teamcode.commandbase.Intake;
 import org.firstinspires.ftc.teamcode.commandbase.commands.*;
@@ -45,7 +43,7 @@ public class FullTeleOp extends CommandOpMode {
     public void initialize() {
         // Must have for all opModes
         opModeType = OpModeType.TELEOP;
-        depositInit = DepositPivotState.MIDDLE_HOLD;
+        // depositInit = DepositInit.MIDDLE_HOLD;
 
         INTAKE_HOLD_SPEED = 0;
 
@@ -63,24 +61,28 @@ public class FullTeleOp extends CommandOpMode {
         operator = new GamepadEx(gamepad2);
 
         // Driver Gamepad controls
-        driver.getGamepadButton(GamepadKeys.Button.CIRCLE).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                 new InstantCommand(() -> robot.intake.toggleActiveIntake(SampleColorTarget.ANY_COLOR))
         );
 
-        driver.getGamepadButton(GamepadKeys.Button.CROSS).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new InstantCommand(() -> robot.intake.toggleActiveIntake(SampleColorTarget.ALLIANCE_ONLY))
         );
 
-        driver.getGamepadButton(GamepadKeys.Button.SQUARE).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                 new SetIntake(robot, IntakePivotState.INTAKE_READY, IntakeMotorState.HOLD, MAX_EXTENDO_EXTENSION/2, true)
         );
 
-        driver.getGamepadButton(GamepadKeys.Button.TRIANGLE).whenPressed(
+        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new SetIntake(robot, IntakePivotState.INTAKE_READY, intakeMotorState, MAX_EXTENDO_EXTENSION, true)
         );
 
-        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
-                new InstantCommand(() -> robot.follower.setPose(new Pose(0, 0, 0)))
+//        driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+//                new InstantCommand(() -> robot.follower.setPose(new Pose(0, 0, 0)))
+//        );
+
+        operator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+                new SetDeposit(robot, Deposit.DepositPivotState.MIDDLE_HOLD, ENDGAME_ASCENT_HEIGHT, false).withTimeout(2500)  // Adjust timeout as needed
         );
 
         driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
@@ -137,39 +139,39 @@ public class FullTeleOp extends CommandOpMode {
         );
 
         // Operator Gamepad controls
-        operator.getGamepadButton(GamepadKeys.Button.SQUARE).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                 new InstantCommand(() -> frontSpecimenScoring = !frontSpecimenScoring)
         );
 
-        operator.getGamepadButton(GamepadKeys.Button.CIRCLE).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                 new ConditionalCommand(
                         new UninterruptibleCommand(
-                                new SetDeposit(robot, DepositPivotState.FRONT_SPECIMEN_SCORING, FRONT_HIGH_SPECIMEN_HEIGHT, false).withTimeout(1500)
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false).withTimeout(1500)
                         ),
                         new UninterruptibleCommand(
-                                new SetDeposit(robot, DepositPivotState.BACK_SPECIMEN_SCORING, BACK_HIGH_SPECIMEN_HEIGHT, false).withTimeout(1500)
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false).withTimeout(1500)
                         ),
                         () -> frontSpecimenScoring
                 )
         );
 
-        operator.getGamepadButton(GamepadKeys.Button.CROSS).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new ConditionalCommand(
                         new UninterruptibleCommand(
-                                new SetDeposit(robot, DepositPivotState.BACK_SPECIMEN_INTAKE, 0, false).withTimeout(1500)
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, false).withTimeout(1500)
                         ),
                         new UninterruptibleCommand(
-                                new SetDeposit(robot, DepositPivotState.FRONT_SPECIMEN_INTAKE, 0, false).withTimeout(1500)
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, false).withTimeout(1500)
                         ),
                         () -> frontSpecimenScoring
                 )
         );
 
-        operator.getGamepadButton(GamepadKeys.Button.TRIANGLE).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new ConditionalCommand(
                         new attachSpecimen(robot.deposit),
                         new InstantCommand(),
-                        () -> depositPivotState.equals(DepositPivotState.BACK_SPECIMEN_SCORING)
+                        () -> depositPivotState.equals(DepositPivotState.SPECIMEN_SCORING)
                 )
         );
 

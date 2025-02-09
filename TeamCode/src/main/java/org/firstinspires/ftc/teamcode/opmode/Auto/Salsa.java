@@ -221,7 +221,7 @@ public class Salsa extends CommandOpMode {
     @Override
     public void initialize() {
         opModeType = OpModeType.AUTO;
-        depositInit = DepositPivotState.FRONT_SPECIMEN_SCORING;
+        depositInit = DepositInit.SPECIMEN_SCORING;
 
         timer = new ElapsedTime();
         timer.reset();
@@ -241,7 +241,7 @@ public class Salsa extends CommandOpMode {
         generatePath();
 
         ParallelCommandGroup attachSpecimen = new ParallelCommandGroup(
-                new SetDeposit(robot, Deposit.depositPivotState, BACK_HIGH_SPECIMEN_ATTACH_HEIGHT, false),
+                new SetDeposit(robot, Deposit.depositPivotState, HIGH_SPECIMEN_ATTACH_HEIGHT, false),
                 new SequentialCommandGroup(
                         new WaitCommand(300),
                         new InstantCommand(() -> robot.deposit.setClawOpen(true))
@@ -255,7 +255,7 @@ public class Salsa extends CommandOpMode {
                 new SequentialCommandGroup(
                         // Specimen 1
                         new ParallelCommandGroup(
-                                new SetDeposit(robot, DepositPivotState.FRONT_SPECIMEN_SCORING, FRONT_HIGH_SPECIMEN_HEIGHT, false),
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false),
                                 new FollowPathCommand(robot.follower, paths.get(0))
                         ),
                         new InstantCommand(() -> robot.follower.setMaxPower(1)),
@@ -296,7 +296,7 @@ public class Salsa extends CommandOpMode {
                         new ParallelCommandGroup(
                             new SetIntake(robot, IntakePivotState.TRANSFER, IntakeMotorState.REVERSE, 0, false),
                             new FollowPathCommand(robot.follower, paths.get(5)),
-                            new SetDeposit(robot, DepositPivotState.BACK_SPECIMEN_INTAKE, 0, true)
+                            new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, true)
                         ),
                         new InstantCommand(() -> robot.intake.setActiveIntake(IntakeMotorState.STOP)),
                         new InstantCommand(() -> robot.follower.setMaxPower(0.25)),
@@ -311,7 +311,7 @@ public class Salsa extends CommandOpMode {
                         new InstantCommand(() -> robot.follower.setMaxPower(1)),
                         // Score Specimen 2
                         new ParallelCommandGroup(
-                                new SetDeposit(robot, DepositPivotState.FRONT_SPECIMEN_SCORING, FRONT_HIGH_SPECIMEN_HEIGHT, false),
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false),
                                 new FollowPathCommand(robot.follower, paths.get(7)),
                                 new SequentialCommandGroup(
                                         new WaitCommand(1000),
@@ -325,7 +325,7 @@ public class Salsa extends CommandOpMode {
                         new ParallelRaceGroup(
                             new ParallelCommandGroup(
                                     new FollowPathCommand(robot.follower, paths.get(8)),
-                                    new SetDeposit(robot, DepositPivotState.BACK_SPECIMEN_INTAKE, 0, true),
+                                    new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, true),
                                     new SequentialCommandGroup(
                                             new WaitCommand(1000),
                                             new InstantCommand(() -> robot.follower.setMaxPower(0.25))
@@ -339,7 +339,7 @@ public class Salsa extends CommandOpMode {
                         new InstantCommand(() -> robot.follower.setMaxPower(1)),
                         // Scoring Sample 3
                         new ParallelCommandGroup(
-                                new SetDeposit(robot, DepositPivotState.FRONT_SPECIMEN_SCORING, FRONT_HIGH_SPECIMEN_HEIGHT, false),
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false),
                                 new SequentialCommandGroup(
                                         new WaitCommand(200),
                                         new FollowPathCommand(robot.follower, paths.get(9))
@@ -356,7 +356,7 @@ public class Salsa extends CommandOpMode {
                         new ParallelRaceGroup(
                                 new ParallelCommandGroup(
                                         new FollowPathCommand(robot.follower, paths.get(10)),
-                                        new SetDeposit(robot, DepositPivotState.BACK_SPECIMEN_INTAKE, 0, true),
+                                        new SetDeposit(robot, DepositPivotState.SPECIMEN_INTAKE, 0, true),
                                         new SequentialCommandGroup(
                                                 new WaitCommand(1000),
                                                 new InstantCommand(() -> robot.follower.setMaxPower(0.25))
@@ -370,7 +370,7 @@ public class Salsa extends CommandOpMode {
                         new InstantCommand(() -> robot.follower.setMaxPower(1)),
                         // Scoring Specimen 4
                         new ParallelCommandGroup(
-                                new SetDeposit(robot, DepositPivotState.FRONT_SPECIMEN_SCORING, FRONT_HIGH_SPECIMEN_HEIGHT, false),
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false),
                                 new SequentialCommandGroup(
                                         new WaitCommand(200),
                                         new FollowPathCommand(robot.follower, paths.get(11))

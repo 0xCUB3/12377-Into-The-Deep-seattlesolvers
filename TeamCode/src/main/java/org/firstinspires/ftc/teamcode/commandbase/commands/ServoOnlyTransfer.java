@@ -25,7 +25,7 @@ public class ServoOnlyTransfer extends CommandBase {
 
     @Override
     public void initialize() {
-        robot.deposit.setPivot(Deposit.DepositPivotState.READY_TRANSFER);
+        robot.deposit.setPivot(Deposit.DepositPivotState.TRANSFER);
         robot.deposit.setClawOpen(true);
 
         timer.reset();

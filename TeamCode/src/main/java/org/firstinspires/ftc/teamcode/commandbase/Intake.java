@@ -36,9 +36,7 @@ public class Intake extends SubsystemBase {
     public enum IntakePivotState {
         INTAKE,
         INTAKE_READY,
-        TRANSFER,
-        TRANSFER_READY,
-        HOVER
+        TRANSFER
     }
 
     public enum IntakeMotorState {
@@ -108,11 +106,6 @@ public class Intake extends SubsystemBase {
                 robot.rightIntakePivot.setPosition(INTAKE_PIVOT_TRANSFER_POS);
                 break;
 
-            case TRANSFER_READY:
-                robot.leftIntakePivot.setPosition(INTAKE_PIVOT_READY_TRANSFER_POS);
-                robot.rightIntakePivot.setPosition(INTAKE_PIVOT_READY_TRANSFER_POS);
-                break;
-
             case INTAKE:
                 robot.leftIntakePivot.setPosition(INTAKE_PIVOT_INTAKE_POS);
                 robot.rightIntakePivot.setPosition(INTAKE_PIVOT_INTAKE_POS);
@@ -121,11 +114,6 @@ public class Intake extends SubsystemBase {
             case INTAKE_READY:
                 robot.leftIntakePivot.setPosition(INTAKE_PIVOT_READY_INTAKE_POS);
                 robot.rightIntakePivot.setPosition(INTAKE_PIVOT_READY_INTAKE_POS);
-                break;
-
-            case HOVER:
-                robot.leftIntakePivot.setPosition(INTAKE_PIVOT_HOVER_INTAKE_POS);
-                robot.rightIntakePivot.setPosition(INTAKE_PIVOT_HOVER_INTAKE_POS);
                 break;
         }
 
@@ -169,37 +157,25 @@ public class Intake extends SubsystemBase {
             switch (intakeMotorState) {
                 case FORWARD:
                     if (hasSample()) {
-                        if (!readyForColorDetection) {
-                            colorDetectionTimer.reset();
-                            readyForColorDetection = true;
-                        } else if (readyForColorDetection && colorDetectionTimer.milliseconds() > 50) {
-                            readyForColorDetection = false;
-
-                            sampleColor = sampleColorDetected(robot.colorSensor.red(), robot.colorSensor.green(), robot.colorSensor.blue());
-                            if (correctSampleDetected()) {
-                                setActiveIntake(HOLD);
-                                if (opModeType.equals(OpModeType.TELEOP)) {
-                                    if (sampleColorTarget.equals(ANY_COLOR)) {
-                                        new RealTransfer(robot).beforeStarting(
-                                                new WaitCommand(125)
-                                        ).schedule(false);
-                                    } else {
-                                        new SetIntake(robot, TRANSFER_READY, HOLD, 0, false).schedule(false);
-                                    }
-                                }
-                            } else {
-                                reverseIntakeTimer.reset();
-                                setActiveIntake(REVERSE);
+                        sampleColor = sampleColorDetected(robot.colorSensor.red(), robot.colorSensor.green(), robot.colorSensor.blue());
+                        if (correctSampleDetected()) {
+                            setActiveIntake(STOP);
+                            if (opModeType.equals(OpModeType.TELEOP)) {
+                                new RealTransfer(robot).beforeStarting(
+                                        new WaitCommand(125)
+                                ).schedule(false);
                             }
+                        } else if (!sampleColor.equals(NONE)) {
+                            setActiveIntake(REVERSE);
+                        } else {
+                            setActiveIntake(FORWARD);
                         }
+                    } else {
+                        sampleColor = NONE;
                     }
                     break;
                 case REVERSE:
-                    if (!hasSample() && !waitingForReverse) {
-                        reverseIntakeTimer.reset();
-                        waitingForReverse = true;
-                    } else if (!hasSample() && waitingForReverse && reverseIntakeTimer.milliseconds() > REVERSE_TIME_MS) {
-                        waitingForReverse = false;
+                    if (!hasSample()) {
                         if (opModeType.equals(OpModeType.TELEOP)) {
                             setActiveIntake(FORWARD);
                         } else {
@@ -207,14 +183,10 @@ public class Intake extends SubsystemBase {
                         }
                     }
                     break;
-                case HOLD:
-                    if (!correctSampleDetected() && hasSample() && Intake.intakePivotState.equals(INTAKE)) {
-                        setActiveIntake(REVERSE);
-                    }
-                    break;
+
                 // No point of setting intakeMotor to 0 again
             }
-        } else if (intakePivotState.equals(TRANSFER) || intakePivotState.equals(TRANSFER_READY)) {
+        } else if (intakePivotState.equals(TRANSFER)) {
             setActiveIntake(HOLD);
         }
     }

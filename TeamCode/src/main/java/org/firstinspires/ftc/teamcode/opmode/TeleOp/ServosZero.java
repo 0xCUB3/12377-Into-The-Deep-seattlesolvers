@@ -49,11 +49,11 @@ public class ServosZero extends com.qualcomm.robotcore.eventloop.opmode.OpMode {
 
 
 
-        if (leftIntakePivot != null) leftIntakePivot.setPosition(0);
-        if (rightIntakePivot != null) rightIntakePivot.setPosition(0);
-        if (leftDepositPivot != null) leftDepositPivot.setPosition(0);
-        if (rightDepositPivot != null) rightDepositPivot.setPosition(0);
-        if (depositClaw != null) depositClaw.setPosition(0);
+        if (leftIntakePivot != null) leftIntakePivot.setPosition(0.5);
+        if (rightIntakePivot != null) rightIntakePivot.setPosition(0.5);
+        if (leftDepositPivot != null) leftDepositPivot.setPosition(0.5);
+        if (rightDepositPivot != null) rightDepositPivot.setPosition(0.5);
+        if (depositClaw != null) depositClaw.setPosition(0.5);
 
 
         telemetry.addData("leftIntakePivot", (leftIntakePivot != null) ? leftIntakePivot.getPosition() : "N/A");

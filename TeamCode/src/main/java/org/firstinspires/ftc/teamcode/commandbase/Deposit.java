@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.commandbase;
 
 import static org.firstinspires.ftc.teamcode.hardware.Globals.*;
+import static org.firstinspires.ftc.teamcode.hardware.Globals.DEPOSIT_PIVOT_SPECIMEN_INTAKE_POS;
+import static org.firstinspires.ftc.teamcode.hardware.Globals.DEPOSIT_PIVOT_SPECIMEN_SCORING_POS;
 
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.controller.PIDFController;
@@ -11,7 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.Robot;
 public class Deposit extends SubsystemBase {
     private final Robot robot = Robot.getInstance();
     private final int divideConstant = 30;
-    private static final PIDFController slidePIDF = new PIDFController(0.007,0, 0.00017, 0.00023);
+    private static final PIDFController slidePIDF = new PIDFController(0.0125,0,0.0002, 0.00016);
 
     // Between open and closed
     public boolean clawOpen;
@@ -25,14 +27,10 @@ public class Deposit extends SubsystemBase {
 
     public enum DepositPivotState {
         SCORING,
-        FRONT_SPECIMEN_SCORING,
-        BACK_SPECIMEN_SCORING,
-        FRONT_SPECIMEN_INTAKE,
-        BACK_SPECIMEN_INTAKE,
+        SPECIMEN_SCORING,
         TRANSFER,
-        READY_TRANSFER,
         MIDDLE_HOLD,
-        AUTO_TOUCH_BAR
+        SPECIMEN_INTAKE
     }
     public static DepositPivotState depositPivotState;
 
@@ -42,8 +40,13 @@ public class Deposit extends SubsystemBase {
 
         // OpMode specific initializations
         if (opModeType.equals(OpModeType.AUTO)) {
-            setPivot(depositInit);
+            if (depositInit.equals(DepositInit.BUCKET_SCORING)) {
+                setPivot(DepositPivotState.SCORING);
+            } else {
+                setPivot(DepositPivotState.SPECIMEN_SCORING);
+            }
             setClawOpen(false);
+
         } else if (opModeType.equals(OpModeType.TELEOP)) {
             setPivot(DepositPivotState.MIDDLE_HOLD);
             setClawOpen(true);
@@ -60,7 +63,7 @@ public class Deposit extends SubsystemBase {
     }
 
     public void autoUpdateSlides() {
-        if (this.target == BACK_HIGH_SPECIMEN_ATTACH_HEIGHT && !slidesReached) {
+        if (this.target == HIGH_SPECIMEN_ATTACH_HEIGHT && !slidesReached) {
             slidePIDF.setP(0.01);
         } else {
             slidePIDF.setP(0.007);
@@ -103,39 +106,24 @@ public class Deposit extends SubsystemBase {
                 robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_SCORING_POS);
                 robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_SCORING_POS);
                 break;
-            case FRONT_SPECIMEN_SCORING:
-                robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_FRONT_SCORING_POS);
-                robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_FRONT_SCORING_POS);
-                break;
-            case BACK_SPECIMEN_SCORING:
-                robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_BACK_SCORING_POS);
-                robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_BACK_SCORING_POS);
+            case SPECIMEN_SCORING:
+                robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_SCORING_POS);
+                robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_SCORING_POS);
                 break;
             case TRANSFER:
                 robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_TRANSFER_POS);
                 robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_TRANSFER_POS);
                 break;
-            case READY_TRANSFER:
-                robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_READY_TRANSFER_POS);
-                robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_READY_TRANSFER_POS);
-                break;
-            case FRONT_SPECIMEN_INTAKE:
-                robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_FRONT_INTAKE_POS);
-                robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_FRONT_INTAKE_POS);
-                break;
-            case BACK_SPECIMEN_INTAKE:
-                robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_BACK_INTAKE_POS);
-                robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_BACK_INTAKE_POS);
+            case SPECIMEN_INTAKE:
+                robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_INTAKE_POS);
+                robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_SPECIMEN_INTAKE_POS);
                 break;
             case MIDDLE_HOLD:
                 robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_MIDDLE_POS);
                 robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_MIDDLE_POS);
                 break;
-            case AUTO_TOUCH_BAR:
-                robot.leftDepositPivot.setPosition(DEPOSIT_PIVOT_AUTO_BAR_POS);
-                robot.rightDepositPivot.setPosition(DEPOSIT_PIVOT_AUTO_BAR_POS);
-                break;
         }
+
         Deposit.depositPivotState = depositPivotState;
     }
 

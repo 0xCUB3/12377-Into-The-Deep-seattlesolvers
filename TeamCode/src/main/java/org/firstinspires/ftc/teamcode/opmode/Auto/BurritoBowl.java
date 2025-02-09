@@ -197,7 +197,7 @@ public class BurritoBowl extends CommandOpMode {
     @Override
     public void initialize() {
         opModeType = OpModeType.AUTO;
-        depositInit = DepositPivotState.FRONT_SPECIMEN_SCORING;
+        depositInit = DepositInit.BUCKET_SCORING;
         Intake.sampleColorTarget = SampleColorTarget.ANY_COLOR;
 
         timer = new ElapsedTime();
@@ -250,7 +250,7 @@ public class BurritoBowl extends CommandOpMode {
 
                         new ParallelCommandGroup(
                                 new FollowPathCommand(robot.follower, paths.get(7)),
-                                new SetDeposit(robot, DepositPivotState.AUTO_TOUCH_BAR, 0, false).beforeStarting(new WaitCommand(300))
+                                new SetDeposit(robot, DepositPivotState.MIDDLE_HOLD, 0, false).beforeStarting(new WaitCommand(300))
                         )
                 )
         );

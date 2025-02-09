@@ -25,7 +25,12 @@ public class Globals {
         RED_OBSERVATION
     }
 
-    public static Deposit.DepositPivotState depositInit;
+    public enum DepositInit {
+        BUCKET_SCORING,
+        SPECIMEN_SCORING
+    }
+
+    public static DepositInit depositInit;
 
     public static OpModeType opModeType;
     public static AllianceColor allianceColor;
@@ -65,42 +70,43 @@ public class Globals {
     public static double INTAKE_PIVOT_HOVER_INTAKE_POS = 0.71;
 
     // Intake Extendo
-    public static double MAX_EXTENDO_EXTENSION = 500;
+    public static double MAX_EXTENDO_EXTENSION = 480;
 
     // Deposit Pivot
-    public static double DEPOSIT_PIVOT_TRANSFER_POS = 0.94;
+    public static double DEPOSIT_PIVOT_TRANSFER_POS = 0.45;
     public static double DEPOSIT_PIVOT_READY_TRANSFER_POS = 0.90;
-    public static double DEPOSIT_PIVOT_MIDDLE_POS = 0.985;
+    public static double DEPOSIT_PIVOT_MIDDLE_POS = 0.495;
     public static double DEPOSIT_PIVOT_AUTO_BAR_POS = 0.35;
     public static double DEPOSIT_PIVOT_SCORING_POS = 0.3;
+    public static double DEPOSIT_PIVOT_SPECIMEN_INTAKE_POS = 0.275;
+    public static double DEPOSIT_PIVOT_SPECIMEN_SCORING_POS = 0.00;
     public static double DEPOSIT_PIVOT_SPECIMEN_FRONT_INTAKE_POS = 0.03;
     public static double DEPOSIT_PIVOT_SPECIMEN_BACK_INTAKE_POS = 0.83;
     public static double DEPOSIT_PIVOT_SPECIMEN_FRONT_SCORING_POS = 0.20;
     public static double DEPOSIT_PIVOT_SPECIMEN_BACK_SCORING_POS = 0.71;
 
-    // 0.84 sec/360° -> 0.828 sec/355° -> 828 milliseconds/355°
-    public static double DEPOSIT_PIVOT_MOVEMENT_TIME = 828 + 200; // 200 milliseconds of buffer
-    // 0.84 sec/360° -> 0.828 sec/355° -> (gear ratio of 48:80) 0.497 sec/355° -> 497 milliseconds/355°
-    public static double INTAKE_PIVOT_MOVEMENT_TIME = 497 + 200; // 200 milliseconds of buffer
+    // 0.84 sec/360° -> 0.828 sec/355° -> (gear ratio of 5:4) 1.035 sec/355° -> 1035 milliseconds/355°
+    public static double DEPOSIT_PIVOT_MOVEMENT_TIME = 1035 + 200; // 200 milliseconds of buffer
+    // 0.5 sec/360° -> 0.49 sec/355° -> 490 milliseconds/355°
+    public static double INTAKE_PIVOT_MOVEMENT_TIME = 490 + 200; // 200 milliseconds of buffer
 
     // Deposit Claw
-    public static double DEPOSIT_CLAW_OPEN_POS = 0.43;
-    public static double DEPOSIT_CLAW_CLOSE_POS = 0.14;
+    public static double DEPOSIT_CLAW_OPEN_POS = 0.99;
+    public static double DEPOSIT_CLAW_CLOSE_POS = 0.55;
 
     // Deposit Slides
     public static double MAX_SLIDES_EXTENSION = 2050;
     public static double SLIDES_PIVOT_READY_EXTENSION = 400;
-    public static double LOW_BUCKET_HEIGHT = 1000;
-    public static double HIGH_BUCKET_HEIGHT = 2020;
-    public static double FRONT_HIGH_SPECIMEN_HEIGHT = 1065;
-    public static double BACK_HIGH_SPECIMEN_HEIGHT = 900;
-    public static double BACK_HIGH_SPECIMEN_ATTACH_HEIGHT = 1350;
+    public static double LOW_BUCKET_HEIGHT = 20;
+    public static double HIGH_BUCKET_HEIGHT = 45;
+    public static double HIGH_SPECIMEN_HEIGHT = 900;
+    public static double HIGH_SPECIMEN_ATTACH_HEIGHT = 1350;
     public static double AUTO_ASCENT_HEIGHT = 900;
-    public static double ENDGAME_ASCENT_HEIGHT = 1300;
+    public static double ENDGAME_ASCENT_HEIGHT = 1150;
 
     // Sub Pusher / Sweeper Servo
-    public static double SUB_PUSHER_OUT = 0.54;
-    public static double SUB_PUSHER_IN = 0.08;
+    public static double SUB_PUSHER_OUT = 0.45;
+    public static double SUB_PUSHER_IN = 0.0;
     public static double SUB_PUSHER_AUTO = 0.5;
 
     // command timeout

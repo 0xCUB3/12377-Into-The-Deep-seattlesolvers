@@ -154,7 +154,7 @@ public class Burrito extends CommandOpMode {
     @Override
     public void initialize() {
         opModeType = OpModeType.AUTO;
-        depositInit = DepositPivotState.FRONT_SPECIMEN_SCORING;
+        depositInit = DepositInit.SPECIMEN_SCORING;
 
         timer = new ElapsedTime();
         timer.reset();
@@ -174,7 +174,7 @@ public class Burrito extends CommandOpMode {
         generatePath();
 
         ParallelCommandGroup attachSpecimen = new ParallelCommandGroup(
-                new SetDeposit(robot, Deposit.depositPivotState, BACK_HIGH_SPECIMEN_ATTACH_HEIGHT, false),
+                new SetDeposit(robot, Deposit.depositPivotState, HIGH_SPECIMEN_ATTACH_HEIGHT, false),
                 new SequentialCommandGroup(
                         new WaitCommand(300),
                         new InstantCommand(() -> robot.deposit.setClawOpen(true))
@@ -188,7 +188,7 @@ public class Burrito extends CommandOpMode {
                 new SequentialCommandGroup(
                         // Specimen 1
                         new ParallelCommandGroup(
-                                new SetDeposit(robot, DepositPivotState.FRONT_SPECIMEN_SCORING, FRONT_HIGH_SPECIMEN_HEIGHT, false),
+                                new SetDeposit(robot, DepositPivotState.SPECIMEN_SCORING, HIGH_SPECIMEN_HEIGHT, false),
                                 new FollowPathCommand(robot.follower, paths.get(0))
                         ),
                         attachSpecimen,

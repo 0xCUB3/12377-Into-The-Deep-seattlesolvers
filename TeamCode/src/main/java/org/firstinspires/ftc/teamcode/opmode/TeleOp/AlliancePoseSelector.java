@@ -31,16 +31,16 @@ public class AlliancePoseSelector extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            if (gamepad1.cross || gamepad2.cross) {
+            if (gamepad1.a || gamepad2.a) {
                 allianceColor = BLUE;
                 poseLocationName = BLUE_BUCKET;
-            } else if (gamepad1.circle || gamepad2.circle) {
+            } else if (gamepad1.b || gamepad2.b) {
                 allianceColor = BLUE;
                 poseLocationName = BLUE_OBSERVATION;
-            } else if (gamepad1.square || gamepad2.square) {
+            } else if (gamepad1.x || gamepad2.x) {
                 allianceColor = RED;
                 poseLocationName = RED_BUCKET;
-            } else if (gamepad1.triangle || gamepad2.triangle) {
+            } else if (gamepad1.y || gamepad2.y) {
                 allianceColor = RED;
                 poseLocationName = RED_OBSERVATION;
             }
@@ -61,10 +61,10 @@ public class AlliancePoseSelector extends LinearOpMode {
                 buttonTimer.reset();
             }
 
-            telemetry.addData("Cross", "Blue Bucket (left)");
-            telemetry.addData("Circle", "Blue Observation (right)");
-            telemetry.addData("Square", "Red Bucket (left)");
-            telemetry.addData("Triangle", "Red Observation (right)");
+            telemetry.addData("A", "Blue Bucket (left)");
+            telemetry.addData("B", "Blue Observation (right)");
+            telemetry.addData("X", "Red Bucket (left)");
+            telemetry.addData("Y", "Red Observation (right)");
 
             telemetry.addData("Alliance Color", allianceColor);
             telemetry.addData("poseLocationName", poseLocationName);

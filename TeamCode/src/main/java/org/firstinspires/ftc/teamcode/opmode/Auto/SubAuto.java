@@ -83,7 +83,7 @@ public class SubAuto extends CommandOpMode {
     @Override
     public void initialize() {
         opModeType = OpModeType.AUTO;
-        depositInit = DepositPivotState.SCORING;
+        depositInit = DepositInit.BUCKET_SCORING;
 
         timer = new ElapsedTime();
         timer.reset();
