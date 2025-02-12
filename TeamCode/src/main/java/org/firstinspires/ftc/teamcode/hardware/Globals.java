@@ -63,23 +63,23 @@ public class Globals {
     public static int BLUE_EDGE_CASE_THRESHOLD = 675;
 
     // Intake Pivot
-    public static double INTAKE_PIVOT_TRANSFER_POS = 0.05;
+    public static double INTAKE_PIVOT_TRANSFER_POS = 0.85;
     public static double INTAKE_PIVOT_READY_TRANSFER_POS = 0.25;
-    public static double INTAKE_PIVOT_INTAKE_POS = 0.735;
-    public static double INTAKE_PIVOT_READY_INTAKE_POS = 0.54;
+    public static double INTAKE_PIVOT_INTAKE_POS = 0.05;
+    public static double INTAKE_PIVOT_READY_INTAKE_POS = 0.34;
     public static double INTAKE_PIVOT_HOVER_INTAKE_POS = 0.71;
 
     // Intake Extendo
     public static double MAX_EXTENDO_EXTENSION = 480;
 
     // Deposit Pivot
-    public static double DEPOSIT_PIVOT_TRANSFER_POS = 0.45;
+    public static double DEPOSIT_PIVOT_TRANSFER_POS = 0.82;
     public static double DEPOSIT_PIVOT_READY_TRANSFER_POS = 0.90;
-    public static double DEPOSIT_PIVOT_MIDDLE_POS = 0.495;
+    public static double DEPOSIT_PIVOT_MIDDLE_POS = 0.9;
     public static double DEPOSIT_PIVOT_AUTO_BAR_POS = 0.35;
-    public static double DEPOSIT_PIVOT_SCORING_POS = 0.3;
-    public static double DEPOSIT_PIVOT_SPECIMEN_INTAKE_POS = 0.275;
-    public static double DEPOSIT_PIVOT_SPECIMEN_SCORING_POS = 0.00;
+    public static double DEPOSIT_PIVOT_SCORING_POS = 0.23;
+    public static double DEPOSIT_PIVOT_SPECIMEN_INTAKE_POS = 0.27;
+    public static double DEPOSIT_PIVOT_SPECIMEN_SCORING_POS = 0.23;
     public static double DEPOSIT_PIVOT_SPECIMEN_FRONT_INTAKE_POS = 0.03;
     public static double DEPOSIT_PIVOT_SPECIMEN_BACK_INTAKE_POS = 0.83;
     public static double DEPOSIT_PIVOT_SPECIMEN_FRONT_SCORING_POS = 0.20;
@@ -92,7 +92,7 @@ public class Globals {
 
     // Deposit Claw
     public static double DEPOSIT_CLAW_OPEN_POS = 0.99;
-    public static double DEPOSIT_CLAW_CLOSE_POS = 0.55;
+    public static double DEPOSIT_CLAW_CLOSE_POS = 0.83;
 
     // Deposit Slides
     public static double MAX_SLIDES_EXTENSION = 2050;
